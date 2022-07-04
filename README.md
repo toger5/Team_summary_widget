@@ -13,5 +13,5 @@ It is currently hosted on netlify and can easily be added with the composer. Jus
 ### How to update the state event
  - in element type `/devtools` into the compose
  - send a new state event or search for `"io.element.team_summary"`.
- - edit the value of `content/html`
+ - edit the value of `summary/content/html`
  - reload the widget
