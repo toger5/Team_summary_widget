@@ -35,6 +35,15 @@
 
     <!-- The actual widget functionality -->
     <script type="text/javascript">
+      const INITIAL_WIDGET_HTML = `
+      <h3>welcome to the widget</h3>
+      The content of this widget is stored in a state event.</ br>
+      Edit the value (<code>`+TEAM_SUMMARY_STATE+`/`+TEAM_SUMMARY_KEY+`content/html</code>) of the`+TEAM_SUMMARY_STATE+` state event to edit this page.</ br>
+      </ br>
+      It is recommended to create the html with other tools (for example https://markdowntohtml.com/) remove the newlines characters and paste it into the state event.</br>
+      <h4>Edit the state event</h4>
+      The state event can be edited by typing <code>/devtools</code> and selecting room state.
+      `
       const TEAM_SUMMARY_STATE = "io.element.team_summary"
       const TEAM_SUMMARY_KEY = "summary"
       try {
@@ -46,8 +55,17 @@
 
         const widgetApi = new mxwidgets.WidgetApi(widgetId);
         // Request capability for the state Event
-        widgetApi.requestCapabilityToReceiveState(TEAM_SUMMARY_STATE);
+        widgetApi.requestCapabilityToSendState(TEAM_SUMMARY_STATE, TEAM_SUMMARY_KEY);
+        widgetApi.requestCapabilityToReceiveState(TEAM_SUMMARY_STATE, TEAM_SUMMARY_KEY);
 
+        function createStateEvent(){
+          widgetApi.sendStateEvent(
+            TEAM_SUMMARY_STATE,
+        TEAM_SUMMARY_KEY,
+        content: {html:"CHANGE THE CONTENT OF YOUR PAGE "},
+        roomId?: string,
+    )
+        }
         // }
         widgetApi.on("ready", function () {
           // Fill in the basic widget details now that we're allowed to operate.
@@ -66,6 +84,8 @@
                 teamDescription = events[0];
                 document.getElementById("teamDescription").innerHTML =
                   teamDescription.content.html;
+              }else{
+
               }
             });
         });
