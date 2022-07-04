@@ -92,11 +92,11 @@
         widgetApi.on(`action:send_event`, (teamDescriptionEv) => {
           switch (teamDescriptionEv.detail.data.type) {
             case "io.element.team_summary":
-              console.log(teamDescriptionEv)
+              console.log("New Team Summary Event:", teamDescriptionEv)
               teamDescriptionEv.preventDefault();
               widgetApi.transport.reply(teamDescriptionEv.detail, {});
               document.getElementById("teamDescription").innerHTML =
-              teamDescriptionEv.content.html;
+              teamDescriptionEv.detail.data.content.html;
               break;
           }
         }
