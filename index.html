@@ -89,6 +89,19 @@
           );
         }
         // }
+        widgetApi.on(`action:send_event`, (teamDescriptionEv) => {
+          switch (teamDescriptionEv.detail.data.type) {
+            case "io.element.team_summary":
+              console.log(teamDescriptionEv)
+              teamDescriptionEv.preventDefault();
+              widgetApi.transport.reply(teamDescriptionEv.detail, {});
+              document.getElementById("teamDescription").innerHTML =
+              teamDescriptionEv.content.html;
+              break;
+          }
+        }
+        );
+
         widgetApi.on("ready", function () {
           // Fill in the basic widget details now that we're allowed to operate.
           document.getElementById("container").innerHTML =
