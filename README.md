@@ -1,4 +1,4 @@
-# Team_summary_widget
+# Team-summary Widget
 This is a very simple widget that reads the state from the state key `"io.element.team_summary"` and displays it as rendered HTML inside the widget IFrame.
 
 ## Use case
