@@ -35,36 +35,58 @@
 
     <!-- The actual widget functionality -->
     <script type="text/javascript">
-      const INITIAL_WIDGET_HTML = `
+      const INITIAL_WIDGET_HTML =
+        `
       <h3>welcome to the widget</h3>
       The content of this widget is stored in a state event.</ br>
-      Edit the value (<code>`+TEAM_SUMMARY_STATE+`/`+TEAM_SUMMARY_KEY+`content/html</code>) of the`+TEAM_SUMMARY_STATE+` state event to edit this page.</ br>
+      Edit the value (<code>` +
+        TEAM_SUMMARY_STATE +
+        `/` +
+        TEAM_SUMMARY_KEY +
+        `content/html</code>) of the` +
+        TEAM_SUMMARY_STATE +
+        ` state event to edit this page.</ br>
       </ br>
       It is recommended to create the html with other tools (for example https://markdowntohtml.com/) remove the newlines characters and paste it into the state event.</br>
       <h4>Edit the state event</h4>
       The state event can be edited by typing <code>/devtools</code> and selecting room state.
-      `
-      const TEAM_SUMMARY_STATE = "io.element.team_summary"
-      const TEAM_SUMMARY_KEY = "summary"
+      `;
+      const TEAM_SUMMARY_STATE = "io.element.team_summary";
+      const TEAM_SUMMARY_KEY = "summary";
       try {
         const qs = parseFragment();
         const widgetId = assertParam(qs, "widgetId");
         const userId = assertParam(qs, "userId");
-        
+
         let teamDescription = "";
 
         const widgetApi = new mxwidgets.WidgetApi(widgetId);
         // Request capability for the state Event
-        widgetApi.requestCapabilityToSendState(TEAM_SUMMARY_STATE, TEAM_SUMMARY_KEY);
-        widgetApi.requestCapabilityToReceiveState(TEAM_SUMMARY_STATE, TEAM_SUMMARY_KEY);
+        widgetApi.requestCapabilityToSendState(
+          TEAM_SUMMARY_STATE,
+          TEAM_SUMMARY_KEY
+        );
+        widgetApi.requestCapabilityToReceiveState(
+          TEAM_SUMMARY_STATE,
+          TEAM_SUMMARY_KEY
+        );
 
-        function createStateEvent(){
+        function createRoomSummaryStateEvent() {
           widgetApi.sendStateEvent(
             TEAM_SUMMARY_STATE,
-        TEAM_SUMMARY_KEY,
-        content: {html:"CHANGE THE CONTENT OF YOUR PAGE "},
-        roomId?: string,
-    )
+            TEAM_SUMMARY_KEY,
+            { html: INITIAL_WIDGET_HTML },
+            null
+          );
+        }
+
+        function createStateEvent() {
+          widgetApi.sendStateEvent(
+            TEAM_SUMMARY_STATE,
+            TEAM_SUMMARY_KEY,
+            { html: "CHANGE THE CONTENT OF YOUR PAGE " },
+            null
+          );
         }
         // }
         widgetApi.on("ready", function () {
@@ -73,19 +95,16 @@
             "<dev id='teamDescription'>" + "</div>";
 
           widgetApi
-            .readStateEvents(
-              TEAM_SUMMARY_STATE,
-              25,
-              "summary",
-              null
-            ).then((events) => {
+            .readStateEvents(TEAM_SUMMARY_STATE, 25, "summary", null)
+            .then((events) => {
               if (events.length > 0) {
                 console.log(events[0]);
                 teamDescription = events[0];
                 document.getElementById("teamDescription").innerHTML =
                   teamDescription.content.html;
-              }else{
-
+              } else {
+                createRoomSummaryStateEvent();
+                location.reload();
               }
             });
         });
