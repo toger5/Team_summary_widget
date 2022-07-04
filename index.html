@@ -19,7 +19,7 @@
     <title>Team Summary</title>
     <!--
       ADD THE WIDGET:
-        /addwidget http://localhost:8080/#/?widgetId=$matrix_widget_id&userId=$matrix_user_id
+        /addwidget https://golden-klepon-1b24b1.netlify.app/#/?widgetId=$matrix_widget_id&userId=$matrix_user_id
     -->
     <link href="index.css" rel="stylesheet" />
   </head>
@@ -36,6 +36,7 @@
     <!-- The actual widget functionality -->
     <script type="text/javascript">
       const TEAM_SUMMARY_STATE = "io.element.team_summary"
+      const TEAM_SUMMARY_KEY = "summary"
       try {
         const qs = parseFragment();
         const widgetId = assertParam(qs, "widgetId");
@@ -57,7 +58,7 @@
             .readStateEvents(
               TEAM_SUMMARY_STATE,
               25,
-              null,
+              "summary",
               null
             ).then((events) => {
               if (events.length > 0) {
