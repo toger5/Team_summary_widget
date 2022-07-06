@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#editDialog {
+/* #editDialog {
   position: fixed;
   width: calc(100% - 60px);
   height: calc(100% - 80px);
@@ -25,6 +25,21 @@
   border-radius: 5px;
   top: 40px;
   left: 0;
+} */
+#editDialog {
+  position: fixed;
+  width: calc(100%);
+  height: calc(60%);
+  border-color: #000;
+  border-style: solid;
+  border-radius: 0;
+  bottom: 0;
+  left: 0;
+
+  border-width: 0;
+  border-top-width: 0px;
+  border-top-width: 2px;
+  border-style: dashed;
 }
 #editButton {
   position: fixed;
@@ -46,7 +61,7 @@
 }
 #editDialog textarea {
   flex-grow: 1;
-  background-color: #ffffffea;
+  background-color: #d7d7d7eb;
   border: none;
   resize: none;
 }

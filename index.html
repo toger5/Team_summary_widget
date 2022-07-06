@@ -55,7 +55,7 @@
       <h4>Edit the state event</h4>
       The state event can be edited by typing <code>/devtools</code> and selecting <b>Explore room state</b>.`;
 
-      const converter = new showdown.Converter({tables: 'true'});
+      const converter = new showdown.Converter({tables: true, parseImgDimensions: true, simplifiedAutoLink: true, tasklists: true, ghCodeBlocks: true});
 
       try {
         const qs = parseFragment();
