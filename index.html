@@ -42,7 +42,15 @@
       const TEAM_SUMMARY_KEY = "summary";
 
       showdown.setFlavor('github');
-      const converter = new showdown.Converter({tables: true, parseImgDimensions: true, simplifiedAutoLink: true, tasklists: true, ghCodeBlocks: true});
+      const converter = new showdown.Converter({
+        tables: true, 
+        parseImgDimensions: true, 
+        simplifiedAutoLink: true, 
+        tasklists: true, 
+        ghCodeBlocks: true,
+        ghMentions: true,
+        ghMentionsLink: "https://matrix.to/#/@dave:matrix.org",
+      });
       
       try {
         const qs = parseFragment();
