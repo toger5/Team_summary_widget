@@ -64,6 +64,9 @@
   background-color: #d7d7d7eb;
   border: none;
   resize: none;
+  white-space: pre;
+  overflow-wrap: normal;
+  overflow-x: scroll;
 }
 /* simple css for markdwon*/
 html,
