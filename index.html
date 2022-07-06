@@ -35,28 +35,15 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
     <!-- The actual widget functionality -->
     <script type="text/javascript">
+      
+
+
       const TEAM_SUMMARY_STATE = "io.element.team_summary";
       const TEAM_SUMMARY_KEY = "summary";
 
-      const INITIAL_WIDGET_HTML =
-        `<h3>welcome to the Team Summary widget</h3>
-      The content of this widget is stored in a state event.<br>
-      Edit the value (<code>` +
-        TEAM_SUMMARY_STATE +
-        `/` +
-        TEAM_SUMMARY_KEY +
-        `/content/html</code>) of the <code>` +
-        TEAM_SUMMARY_STATE +
-        `</code>
-        state event to edit this page.<br>
-      <br>
-      It is recommended to create the html with other tools (for example 
-      <a href="https://markdowntohtml.com/">https://markdowntohtml.com/</a>) remove the newlines characters and paste it into the state event.<br>
-      <h4>Edit the state event</h4>
-      The state event can be edited by typing <code>/devtools</code> and selecting <b>Explore room state</b>.`;
-
+      showdown.setFlavor('github');
       const converter = new showdown.Converter({tables: true, parseImgDimensions: true, simplifiedAutoLink: true, tasklists: true, ghCodeBlocks: true});
-
+      
       try {
         const qs = parseFragment();
         const widgetId = assertParam(qs, "widgetId");
@@ -73,38 +60,53 @@
           TEAM_SUMMARY_KEY
         );
 
-        function createRoomSummaryStateEvent() {
+        function createRoomSummaryStateEvent() {         
+          const INITIAL_WIDGET_MARKDWON = `
+          # Welcome to the Team Summary widget
+          The content of this widget is stored in a state event.
+          use the edit button on the top right corner to change the content of this welcome page.
+          most markdown is supported:
+          ## Tables:
+          | Tables        | Are           | Cool  |
+          | ------------- |:-------------:| -----:|
+          | **col 3 is**  | right-aligned | $1600 |
+          | col 2 is      | *centered*    |   $12 |
+          | zebra stripes | ~~are neat~~  |    $1 |
+          
+          ## Todolists:
+           - [x] done
+           - [ ] not done
+          
+          ## Fonts:
+          **bold**, *italic*...`;
+          
+          const INITIAL_WIDGET_HTML = converter.makeHtml(INITIAL_WIDGET_MARKDWON);
+
           widgetApi.sendStateEvent(
             TEAM_SUMMARY_STATE,
             TEAM_SUMMARY_KEY,
-            { html: INITIAL_WIDGET_HTML },
+            { html: INITIAL_WIDGET_HTML, markdown: INITIAL_WIDGET_MARKDWON },
             null
           );
         }
 
-        function createStateEvent() {
-          widgetApi.sendStateEvent(
-            TEAM_SUMMARY_STATE,
-            TEAM_SUMMARY_KEY,
-            { html: "CHANGE THE CONTENT OF YOUR PAGE " },
-            null
-          );
-        }
         function showEditDialog(btn){
           let editDialog = document.getElementById("editDialog");
           let editButton = document.getElementById("editButton");
           if(editDialog.style.display === "none"){
             editDialog.style.display = "flex"
-            editButton.innerText = "hide"
+            editButton.innerText = "hide edit dialog"
+            editButton.style.opacity = 1.0;
           }else{
             editDialog.style.display = "none"
             editButton.innerText = "edit"
+            editButton.style.opacity = 0.2;
           }
         }
         
         function updateStateWithTextarea(){
           let markdownString = document.getElementById("markdownInput").value;
-          let htmlString = converter.makeHtml(markdownString);;
+          let htmlString = converter.makeHtml(markdownString);
           widgetApi.sendStateEvent(
             TEAM_SUMMARY_STATE,
             TEAM_SUMMARY_KEY,
@@ -128,19 +130,6 @@
         });
 
         widgetApi.on("ready", function () {
-          // Fill in the basic widget details now that we're allowed to operate.
-          showdown.setFlavor('github');
-          const text = `# hello, markdown!
-Lets do **bold**
-| Tables        | Are           | Cool  |
-| ------------- |:-------------:| -----:|
-| **col 3 is**  | right-aligned | $1600 |
-| col 2 is      | *centered*    |   $12 |
-| zebra stripes | ~~are neat~~  |    $1 |`;
-          const html = converter.makeHtml(text);
-
-          document.getElementById("container").innerHTML = html;
-
           widgetApi
             .readStateEvents(TEAM_SUMMARY_STATE, 25, "summary", null)
             .then((events) => {
