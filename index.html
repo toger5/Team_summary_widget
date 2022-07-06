@@ -22,18 +22,17 @@
         /addwidget https://golden-klepon-1b24b1.netlify.app/#/?widgetId=$matrix_widget_id&userId=$matrix_user_id
     -->
     <link href="index.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.1.0/github-markdown.min.css" integrity="sha512-KUoB3bZ1XRBYj1QcH4BHCQjurAZnCO3WdrswyLDtp7BMwCw7dPZngSLqILf68SGgvnWHTD5pPaYrXi6wiRJ65g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="github-markdown.css">
   </head>
   <body>
-    <!-- The widget will be loaded into this container -->
-    <div id="container">Loading...</div>
-
     <!-- Include the widget library -->
     <script src="api.js"></script>
 
     <!-- Bring in some utilities that aren't critical to the example -->
     <script src="utils.js"></script>
 
+    <!-- Markdown to html renderer -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
     <!-- The actual widget functionality -->
     <script type="text/javascript">
       const TEAM_SUMMARY_STATE = "io.element.team_summary";
@@ -47,7 +46,8 @@
         `/` +
         TEAM_SUMMARY_KEY +
         `/content/html</code>) of the <code>` +
-        TEAM_SUMMARY_STATE + `</code>
+        TEAM_SUMMARY_STATE +
+        `</code>
         state event to edit this page.<br>
       <br>
       It is recommended to create the html with other tools (for example 
@@ -55,12 +55,12 @@
       <h4>Edit the state event</h4>
       The state event can be edited by typing <code>/devtools</code> and selecting <b>Explore room state</b>.`;
 
+      const converter = new showdown.Converter({tables: 'true'});
+
       try {
         const qs = parseFragment();
         const widgetId = assertParam(qs, "widgetId");
         const userId = assertParam(qs, "userId");
-
-        let teamDescription = "";
 
         const widgetApi = new mxwidgets.WidgetApi(widgetId);
         // Request capability for the state Event
@@ -90,24 +90,56 @@
             null
           );
         }
-        // }
+        function showEditDialog(btn){
+          let editDialog = document.getElementById("editDialog");
+          let editButton = document.getElementById("editButton");
+          if(editDialog.style.display === "none"){
+            editDialog.style.display = "flex"
+            editButton.innerText = "hide"
+          }else{
+            editDialog.style.display = "none"
+            editButton.innerText = "edit"
+          }
+        }
+        
+        function updateStateWithTextarea(){
+          let markdownString = document.getElementById("markdownInput").value;
+          let htmlString = converter.makeHtml(markdownString);;
+          widgetApi.sendStateEvent(
+            TEAM_SUMMARY_STATE,
+            TEAM_SUMMARY_KEY,
+            { html: htmlString, markdown: markdownString},
+            null
+          );
+        }
+
         widgetApi.on(`action:send_event`, (teamDescriptionEv) => {
           switch (teamDescriptionEv.detail.data.type) {
             case "io.element.team_summary":
-              console.log("New Team Summary Event:", teamDescriptionEv)
+              console.log("New Team Summary Event:", teamDescriptionEv);
               teamDescriptionEv.preventDefault();
               widgetApi.transport.reply(teamDescriptionEv.detail, {});
-              document.getElementById("teamDescription").innerHTML =
-              teamDescriptionEv.detail.data.content.html;
+              document.getElementById("container").innerHTML =
+                teamDescriptionEv.detail.data.content.html;
+              document.getElementById("markdownInput").value =
+                teamDescriptionEv.detail.data.content.markdown;
               break;
           }
-        }
-        );
+        });
 
         widgetApi.on("ready", function () {
           // Fill in the basic widget details now that we're allowed to operate.
-          document.getElementById("container").innerHTML =
-            "<dev id='teamDescription'>" + "</div>";
+          showdown.setFlavor('github');
+          const text = `# hello, markdown!
+Lets do **bold**
+| Tables        | Are           | Cool  |
+| ------------- |:-------------:| -----:|
+| **col 3 is**  | right-aligned | $1600 |
+| col 2 is      | *centered*    |   $12 |
+| zebra stripes | ~~are neat~~  |    $1 |`;
+          const html = converter.makeHtml(text);
+
+          document.getElementById("container").innerHTML = html;
 
           widgetApi
             .readStateEvents(TEAM_SUMMARY_STATE, 25, "summary", null)
@@ -115,8 +147,10 @@
               if (events.length > 0) {
                 console.log(events[0]);
                 teamDescription = events[0];
-                document.getElementById("teamDescription").innerHTML =
+                document.getElementById("container").innerHTML =
                   teamDescription.content.html;
+                document.getElementById("markdownInput").value =
+                  teamDescription.content.markdown;
               } else {
                 createRoomSummaryStateEvent();
                 location.reload();
@@ -130,5 +164,13 @@
         handleError(e);
       }
     </script>
+
+    <!-- The widget will be loaded into this container -->
+    <div id="container" class="markdown-body"">Loading...</div>
+    <button id="editButton" onclick="showEditDialog()">edit</button>
+    <div id="editDialog" style="display: none;">
+      <textarea id="markdownInput" name="markdownInput"></textarea>
+      <button onclick="updateStateWithTextarea()">send</button>
+    </div>
   </body>
 </html>

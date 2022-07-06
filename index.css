@@ -14,33 +14,62 @@
  * limitations under the License.
  */
 
-html, body {
-    background-color: #ffffff;
-    color: #000000;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+#editDialog {
+  position: fixed;
+  width: calc(100% - 60px);
+  height: calc(100% - 80px);
+  margin: 20px;
+  border-color: #0cbd8b;
+  border-style: solid;
+  border-width: 5px;
+  border-radius: 5px;
+  top: 40px;
+  left: 0;
+}
+#editButton {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+}
+#editDialog button {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+}
+#editDialog textarea {
+  flex-grow: 1;
+  background-color: #ffffffea;
+  border: none;
+  resize: none;
+}
+/* simple css for markdwon*/
+html,
+body {
+  background-color: #ffffff;
+  color: #000000;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
 body {
-    padding: 20px;
+  padding: 20px;
 }
 
 button {
-    border: none;
-    color: #ffffff;
-    background-color: #2a9d8f;
-    border-radius: 4px;
-    padding: 6px 12px;
-    cursor: pointer;
+  border: none;
+  color: #ffffff;
+  background-color: #0cbd8b;
+  border-radius: 4px;
+  padding: 6px 12px;
+  cursor: pointer;
 }
-h1 {
-    color: #0dbd8b;
-}
-h2 {
-    color: #0dbd8b;
-}
+h1,
+h2,
 h3 {
-    color: #0dbd8b;
+  text-align: center;
+  color: #0cbd8b;
 }
-td, th {
-    border-bottom: 1px solid #c0c0c0;
+
+td,
+th {
+  border-bottom: 1px solid black;
 }
