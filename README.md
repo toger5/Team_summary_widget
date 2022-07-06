@@ -11,7 +11,5 @@ It is currently hosted on netlify and can easily be added with the composer. Jus
 /addwidget https://golden-klepon-1b24b1.netlify.app/#/?widgetId=$matrix_widget_id&userId=$matrix_user_id
 ```
 ### How to update the state event
- - in element type `/devtools` into the compose
- - send a new state event or search for `"io.element.team_summary"`.
- - edit the value of `summary/content/html`
- - reload the widget
+There is a builtin tool to update the state. Just press edit (the button is almost transparent) on the top right corner and type in the markdown for the welcome page. Be aware, that this only works if you have **permissions to edit the room state**.
+The markdown will be converted to html automatically and the state event will be updated with both: the html and the markdown.
